@@ -183,7 +183,7 @@
                                  完成的交易数:${robotInfo.robotId - robotInfo.robotCount}
                                  进行中的交易数:${robotInfo.robotCount}
                                  从交易中赚取:${robotInfo.earnSum}
-                                 所有资产:${robotInfo.sellEarnNow}
+                                 套牢资产盈利:${robotInfo.sellEarnNow}
                                  `;
                     let series = {};
                     let vaxes = {};
@@ -193,10 +193,10 @@
                         vaxes[i] = {title: "btc"};
                     }
                     series[0].lineWidth = 1;
-                    series[1].lineWidth = 5;
-                    series[2].lineWidth = 5;
-                    series[3].lineWidth = 5;
-                    series[4].lineWidth = 5;
+                    series[1].lineWidth = 4;
+                    series[2].lineWidth = 4;
+                    series[3].lineWidth = 4;
+                    series[4].lineWidth = 4;
 
                     let classicOptions = {
                         title: title,

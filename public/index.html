@@ -58,7 +58,7 @@
                 }
 
                 function drawbtcChart(){
-                    drawChart(charts[chartIndex],1000, 500);
+                    drawChart(charts[chartIndex],1500, 800);
                     chartIndex++;
                 }
 
@@ -75,7 +75,10 @@
 //                    }
                     data.addColumn('number', "btc");
                     data.addColumn('number', "buy");
+                    data.addColumn({type: 'string', role: 'tooltip'});
                     data.addColumn('number', "sell");
+                    data.addColumn({type: 'string', role: 'tooltip'});
+
                     let mydata=new Array();
 
 
@@ -101,6 +104,8 @@
                         mydata[i][1] = null;
                         mydata[i][2] = null;
                         mydata[i][3] = null;
+                        mydata[i][4] = null;
+                        mydata[i][5] = null;
 //                        mydata[i][4] = null;
 
                         if(askbidIndex < chartData.length && chartData[askbidIndex]._id - timeTypeTicks[timeType] <= tick){
@@ -119,10 +124,22 @@
 
                         if(buyIndex < robotBuyData.length && robotBuyData[buyIndex]._id <= tick){
                             mydata[i][2] = robotBuyData[buyIndex].usdtBtcPrice;
+                            mydata[i][3] = `ID:${robotBuyData[buyIndex].nodeId}
+                                            买入价:${robotBuyData[buyIndex].usdtBtcPrice}
+                                            成本价:${robotBuyData[buyIndex].btcSellprice}
+                                            最高价:${robotBuyData[buyIndex].highst}
+                                            `;
                             buyIndex++;
                         }
                         if(sellIndex < robotSellData.length && robotSellData[sellIndex]._id <= tick){
-                            mydata[i][3] = robotSellData[sellIndex].sellDonePrice;
+                            mydata[i][4] = robotSellData[sellIndex].sellDonePrice;
+                            mydata[i][5] = `ID:${robotSellData[sellIndex].nodeId}
+                                            卖出价:${robotSellData[sellIndex].sellDonePrice}
+                                            成本价:${robotSellData[buyIndex].btcSellprice}
+                                            最高价:${robotSellData[sellIndex].highst}
+                                            准卖价:${robotSellData[sellIndex].readySellPrice}
+                                            利润:${robotSellData[sellIndex].usdtEarn}
+                                            `;
                             sellIndex++;
                         }
                     }
@@ -171,13 +188,15 @@
                     let series = {};
                     let vaxes = {};
 
-                    for(let i = 0; i < 3; i ++){
+                    for(let i = 0; i < 5; i ++){
                         series[i] = {targetAxisIndex: 0};
                         vaxes[i] = {title: "btc"};
                     }
-                    series[0].lineWidth = 2;
-                    series[1].lineWidth = 4;
-                    series[2].lineWidth = 4;
+                    series[0].lineWidth = 1;
+                    series[1].lineWidth = 5;
+                    series[2].lineWidth = 5;
+                    series[3].lineWidth = 5;
+                    series[4].lineWidth = 5;
 
                     let classicOptions = {
                         title: title,
@@ -186,7 +205,7 @@
 
                         series:series,
                         vAxes: vaxes,
-                        colors: ['#000000', '#d30003', '#2ae747']
+                        colors: ['#000000', '#d30003', '#2ae747', '#2ae747', '#2ae747']
                     };
 
                     function drawClassicChart() {
@@ -285,9 +304,9 @@
 <!--<input type="checkbox" id="usdtdepth_checkbox" > usdtdepth</input>-->
 
 
-<div id="chart_0" style="width: 1000px; height: 500px"></div>
-<div id="chart_1" style="width: 1000px; height: 500px "></div>
-<div id="chart_2" style="width: 1000px; height: 500px "></div>
-<div id="chart_3" style="width: 1000px; height: 500px "></div>
+<div id="chart_0" style="width: 1500px; height: 800px"></div>
+<div id="chart_1" style="width: 1500px; height: 800px "></div>
+<div id="chart_2" style="width: 1500px; height: 800px "></div>
+<div id="chart_3" style="width: 1500px; height: 800px "></div>
 </body>
 </html>

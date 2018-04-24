@@ -118,7 +118,11 @@ function find(collectionName, startTime,endTime,  response){
     project["bid"] = 1;
     project["usdtBtcPrice"] = 1;
     project["sellDonePrice"] = 1;
-
+    project["nodeId"] = 1;
+    project["highst"] = 1;
+    project["usdtEarn"] = 1;
+    project["readySellPrice"] = 1;
+    project["btcSellprice"] = 1;
 
     dbase.collection(collectionName). find({_id:{$gt:startTime,$lt:endTime}}).project(project).sort({_id:1}).toArray(function(err, result) { // 返回集合中所有数据
         if (err) throw err;
@@ -126,7 +130,7 @@ function find(collectionName, startTime,endTime,  response){
          response.end(JSON.stringify(result));
     });
 }
-var server = app.listen(80, function () {
+var server = app.listen(8082, function () {
 
     var host = server.address().address;
     var port = server.address().port;

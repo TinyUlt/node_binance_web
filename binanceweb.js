@@ -46,7 +46,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 
 let MONGODB = process.env.MONGODB;
-let dbName = "br112";
+let dbName = "BTC_USDT_200";
 var dbase;
 MongoClient.connect(MONGODB, function(err, db) {
     assert.equal(null, err);
@@ -112,25 +112,25 @@ function getRobotInfo(response){
     });
 }
 function find(collectionName, startTime,endTime,  response){
-    let project = {};
-    project["_id"] = 1;
-    project["ask"] = 1;
-    project["bid"] = 1;
-    project["usdtBtcPrice"] = 1;
-    project["sellDonePrice"] = 1;
-    project["nodeId"] = 1;
-    project["highst"] = 1;
-    project["usdtEarn"] = 1;
-    project["readySellPrice"] = 1;
-    project["btcSellprice"] = 1;
+    // let project = {};
+    // project["_id"] = 1;
+    // project["ask"] = 1;
+    // project["bid"] = 1;
+    // project["usdtBtcPrice"] = 1;
+    // project["sellDonePrice"] = 1;
+    // project["nodeId"] = 1;
+    // project["highst"] = 1;
+    // project["usdtEarn"] = 1;
+    // project["readySellPrice"] = 1;
+    // project["currencyPerGoodsPreSale"] = 1;
 
-    dbase.collection(collectionName). find({_id:{$gt:startTime,$lt:endTime}}).project(project).sort({_id:1}).toArray(function(err, result) { // 返回集合中所有数据
+    dbase.collection(collectionName). find({_id:{$gt:startTime,$lt:endTime}}).sort({_id:1}).toArray(function(err, result) { // 返回集合中所有数据
         if (err) throw err;
 
          response.end(JSON.stringify(result));
     });
 }
-var server = app.listen(8082, function () {
+var server = app.listen(8083, function () {
 
     var host = server.address().address;
     var port = server.address().port;

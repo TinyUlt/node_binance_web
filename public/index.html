@@ -29,7 +29,7 @@
         "_1h":1000 * 60 * 60,
         "_12h":1000 * 60 * 60 * 12,
         "_1d":1000 * 60 * 60 * 24,
-    }
+    };
 
     function update(){
         let startTime =parseInt((new Date(document.getElementById("DateStart").value)).valueOf()) ;
@@ -48,7 +48,7 @@
         let robotSellData = null;
         let robotInfo = null;
         function checkDone(){
-            if(askbidData != null && robotBuyData != null &&robotSellData != null && robotInfo!=null){
+            if(askbidData !== null && robotBuyData !== null &&robotSellData !== null && robotInfo!==null){
 
                 let chartData = askbidData;
 
@@ -73,18 +73,20 @@
 //                    for(let i = 0; i < coinList.length; i++){
 //                        data.addColumn('number', coinList[i]);
 //                    }
-                    data.addColumn('number', "btc");
+                    data.addColumn('number', "ask");
+                    data.addColumn('number', "bid");
                     data.addColumn('number', "buy");
                     data.addColumn({type: 'string', role: 'tooltip'});
                     data.addColumn('number', "sell");
                     data.addColumn({type: 'string', role: 'tooltip'});
 
-                    let mydata=new Array();
+                    let mydata=[];
 
 
                     let askbidIndex = 0;
                     let buyIndex = 0;
                     let sellIndex = 0;
+
 
 
 
@@ -96,9 +98,9 @@
 
                     let tempask = null;
                     let tempbid = null;
-                    for(let tick = tickStart,  i = 0; tick < tickEnd;tick += 1000, i++){
+                    for(let tick = tickStart,  i = 0; tick < tickEnd;tick += 500, i++){
 
-                        mydata[i] = new Array();
+                        mydata[i] = [];
 
                         mydata[i][0]= new Date(tick);
                         mydata[i][1] = null;
@@ -106,97 +108,75 @@
                         mydata[i][3] = null;
                         mydata[i][4] = null;
                         mydata[i][5] = null;
+                        mydata[i][6] = null;
 //                        mydata[i][4] = null;
 
                         if(askbidIndex < chartData.length && chartData[askbidIndex]._id - timeTypeTicks[timeType] <= tick){
-                            mydata[i][1] = (chartData[askbidIndex].ask + chartData[askbidIndex].bid) / 2;
-//                            mydata[i][2] = chartData[askbidIndex].bid;
+                            mydata[i][1] = chartData[askbidIndex].ask;
+                            mydata[i][2] = chartData[askbidIndex].bid;
 
                             tempask = mydata[i][1];
-//                            tempbid = mydata[i][2];
+                            tempbid = mydata[i][2];
                             askbidIndex++;
                         }else{
-                            if(tempask!=null){
+                            if(tempask!==null){
                                 mydata[i][1] = tempask;
-//                                mydata[i][2] = tempbid;
+                                mydata[i][2] = tempbid;
                             }
                         }
 
                         if(buyIndex < robotBuyData.length && robotBuyData[buyIndex]._id <= tick){
-                            mydata[i][2] = robotBuyData[buyIndex].usdtBtcPrice;
-                            mydata[i][3] = `ID:${robotBuyData[buyIndex].nodeId}
-                                            买入价:${robotBuyData[buyIndex].usdtBtcPrice}
-                                            成本价:${robotBuyData[buyIndex].btcSellprice}
+                            mydata[i][3] = robotBuyData[buyIndex].currencyPerGoodsIn;
+                            mydata[i][4] = `ID:${robotBuyData[buyIndex].nodeId}
+                                            买入价:${robotBuyData[buyIndex].currencyPerGoodsIn}
+                                            成本价:${robotBuyData[buyIndex].currencyPerGoodsCost}
                                             最高价:${robotBuyData[buyIndex].highst}
                                             `;
                             buyIndex++;
                         }
                         if(sellIndex < robotSellData.length && robotSellData[sellIndex]._id <= tick){
-                            mydata[i][4] = robotSellData[sellIndex].sellDonePrice;
-                            mydata[i][5] = `ID:${robotSellData[sellIndex].nodeId}
-                                            卖出价:${robotSellData[sellIndex].sellDonePrice}
-                                            成本价:${robotSellData[sellIndex].btcSellprice}
+                            mydata[i][5] = robotSellData[sellIndex].currencyPerGoodsOut;
+                            mydata[i][6] = `ID:${robotSellData[sellIndex].nodeId}
+                                            买入价:${robotSellData[sellIndex].currencyPerGoodsIn}
+                                            卖出价:${robotSellData[sellIndex].currencyPerGoodsOut}
+                                            成本价:${robotSellData[sellIndex].currencyPerGoodsCost}
+                                            准卖价:${robotSellData[sellIndex].currencyPerGoodsPreSale}
                                             最高价:${robotSellData[sellIndex].highst}
-                                            准卖价:${robotSellData[sellIndex].readySellPrice}
-                                            利润:${robotSellData[sellIndex].usdtEarn}
+                                            买入量(BTC):${robotSellData[sellIndex].goodsIn}
+                                            买入手续费(BNB):${robotSellData[sellIndex].commissionIn}
+                                            卖出手续费(BNB):${robotSellData[sellIndex].commissionOut}
+                                            买入花费金额(USDT):${robotSellData[sellIndex].currencyOut}
+                                            卖出获得金额(USDT):${robotSellData[sellIndex].currencyIn}
                                             `;
                             sellIndex++;
                         }
                     }
 
-//                    for(let i = 0; i < chartData.length; i++){
-//
-//                        mydata[i] = new Array();
-//
-//                        mydata[i][0]= new Date(chartData[i]._id);
-//
-//                        for(let j = 0; j < coinList.length; j++){
-//
-//                            mydata[i][j+1]=parseFloat(chartData[i][coinList[j]]) ;
-//                        }
-//                        mydata[i][3] = null;
-//                        mydata[i][4] = null;
-//
-//
-//
-//
-//                        if(buyIndex < robotBuyData.length && robotBuyData[buyIndex]._id <= chartData[i]._id){
-//                            mydata[i][3] = robotBuyData[buyIndex].usdtBtcPrice;
-//                            buyIndex++;
-//                        }
-//                        if(sellIndex < robotSellData.length && robotSellData[sellIndex]._id <= chartData[i]._id){
-//                            mydata[i][4] = robotSellData[sellIndex].sellDonePrice;
-//                            sellIndex++;
-//                        }
-//
-////                        for(let k = 0; k < robotBuyData.length; k++){
-////
-////                            if((i+1 < chartData.length - 1) && robotBuyData[k]._id >= chartData[i]._id && robotBuyData[k]._id < chartData[i+1]._id) {
-////
-////                            }
-////                        }
-//                    }
 
                     data.addRows(mydata);
 
-                    let title = `可用资产(美元):${robotInfo.balance}
-                                 完成的交易数:${robotInfo.robotId - robotInfo.robotCount}
-                                 进行中的交易数:${robotInfo.robotCount}
-                                 从交易中赚取:${robotInfo.earnSum}
-                                 套牢资产盈利:${robotInfo.sellEarnNow}
-                                 `;
+//                    let title = `可用资产(美元):${robotInfo.balance}
+//                                 完成的交易数:${robotInfo.robotId - robotInfo.robotCount}
+//                                 进行中的交易数:${robotInfo.robotCount}
+//                                 从交易中赚取:${robotInfo.earnSum}
+//                                 套牢资产盈利:${robotInfo.sellEarnNow}
+//                                 btc手续费:${robotInfo.btcFees}
+//                                 usdt手续费:${robotInfo.usdtFees}
+//                                 `;
+                    let title = "";
                     let series = {};
                     let vaxes = {};
 
-                    for(let i = 0; i < 5; i ++){
+                    for(let i = 0; i < 6; i ++){
                         series[i] = {targetAxisIndex: 0};
                         vaxes[i] = {title: "btc"};
                     }
                     series[0].lineWidth = 1;
-                    series[1].lineWidth = 4;
-                    series[2].lineWidth = 4;
-                    series[3].lineWidth = 4;
-                    series[4].lineWidth = 4;
+                    series[1].lineWidth = 1;
+                    series[2].lineWidth = 3;
+                    series[3].lineWidth = 3;
+                    series[4].lineWidth = 3;
+                    series[5].lineWidth = 3;
 
                     let classicOptions = {
                         title: title,
@@ -205,7 +185,7 @@
 
                         series:series,
                         vAxes: vaxes,
-                        colors: ['#000000', '#d30003', '#2ae747', '#2ae747', '#2ae747']
+                        colors: ['#000000','#e7b203', '#2ae747', '#d30003', '#e70502', '#e70502']
                     };
 
                     function drawClassicChart() {
@@ -214,7 +194,6 @@
                     }
 
                     drawClassicChart();
-
                 }
             }
         }
@@ -225,14 +204,14 @@
             askbidData =JSON.parse(cd)
             checkDone();
         });
-        _get = `/d_a?startTime=${startTime}&endTime=${endTime}&symbol=robotbuy`;
+        _get = `/d_a?startTime=${startTime}&endTime=${endTime}&symbol=buy_0`;
         console.log(_get);
         $.post(_get,function(cd,status){
 //            console.log(cd);
             robotBuyData =JSON.parse(cd)
             checkDone();
         });
-        _get = `/d_a?startTime=${startTime}&endTime=${endTime}&symbol=robotsell`;
+        _get = `/d_a?startTime=${startTime}&endTime=${endTime}&symbol=sell_0`;
         console.log(_get);
         $.post(_get,function(cd,status){
 //            console.log(cd);

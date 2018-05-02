@@ -46,7 +46,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 
 let MONGODB = process.env.MONGODB;
-let dbName = "BTCUSDT_Server";
+let dbName = "BTCUSDT_Client";
 var dbase;
 MongoClient.connect(MONGODB, function(err, db) {
     assert.equal(null, err);
@@ -150,13 +150,13 @@ function getRobot(collectionName, where, startTime,endTime,  response){
     // project["readySellPrice"] = 1;
     // project["currencyPerGoodsPreSale"] = 1;
 
-    dbase.collection(collectionName). find({[where]:{$gt:startTime,$lt:endTime}, managerId:4}).project(project).sort({[where]:1}).toArray(function(err, result) { // 返回集合中所有数据
+    dbase.collection(collectionName). find({[where]:{$gt:startTime,$lt:endTime}, managerId:0}).project(project).sort({[where]:1}).toArray(function(err, result) { // 返回集合中所有数据
         if (err) throw err;
 
          response.end(JSON.stringify(result));
     });
 }
-var server = app.listen(80, function () {
+var server = app.listen(8083, function () {
 
     var host = server.address().address;
     var port = server.address().port;

@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-
+let DATABASE_EX = process.env.DATABASE_EX;
 // 创建 application/x-www-form-urlencoded 编码解析
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -46,7 +46,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 
 let MONGODB = process.env.MONGODB;
-let dbName = "BTCUSDT_Client";
+let dbName = "BTCUSDT_"+DATABASE_EX;
 var dbase;
 MongoClient.connect(MONGODB, function(err, db) {
     assert.equal(null, err);

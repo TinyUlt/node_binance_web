@@ -46,7 +46,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 
 let MONGODB = process.env.MONGODB;
-let dbName = "BTC_USDT_200";
+let dbName = "BTCUSDT_Server";
 var dbase;
 MongoClient.connect(MONGODB, function(err, db) {
     assert.equal(null, err);
@@ -90,13 +90,22 @@ function handle(pathName, req, response) {
     console.log(pathName);
 
     if(pathName == "a"){
+
+        let startTime =parseInt(req.query.startTime);
+        let endTime =parseInt( req.query.endTime);
+        let symbol = req.query.symbol;
+
+        getAsksBids(symbol, startTime, endTime, response);
+    }
+    if(pathName == "b"){
         var query = {};
         let timeType = req.query.timeType;
         let startTime =parseInt(req.query.startTime);
         let endTime =parseInt( req.query.endTime);
         let symbol = req.query.symbol;
-        find(symbol, startTime, endTime, response);
-    }else if(pathName == "b"){
+        let where = req.query.where;
+        getRobot(symbol,where, startTime, endTime, response);
+    }else if(pathName == "c"){
 
         getRobotInfo(response);
     }
@@ -111,12 +120,29 @@ function getRobotInfo(response){
         response.end(JSON.stringify(result[0]));
     });
 }
-function find(collectionName, startTime,endTime,  response){
-    // let project = {};
-    // project["_id"] = 1;
-    // project["ask"] = 1;
-    // project["bid"] = 1;
-    // project["usdtBtcPrice"] = 1;
+function getAsksBids(collectionName, startTime,endTime,  response){
+
+    console.log(collectionName);
+    dbase.collection(collectionName). find({_id:{$gt:startTime,$lt:endTime}}).sort({_id:1}).toArray(function(err, result) { // 返回集合中所有数据
+        if (err) throw err;
+
+        response.end(JSON.stringify(result));
+    });
+}
+
+function getRobot(collectionName, where, startTime,endTime,  response){
+    let project = {};
+    project["_id"] = 0;
+    project[where] = 1;
+    project["currencyPerGoodsIn"] = 1;
+    project["currencyPerGoodsInReal"] = 1;
+    project["currencyPerGoodsOut"] = 1;
+    project["nodeId"] = 1;
+    project["currencyPerGoodsIn"] = 1;
+    project["currencyPerGoodsCost"] = 1;
+    project["highst"] = 1;
+    project["currencyPerGoodsPreSale"] = 1;
+
     // project["sellDonePrice"] = 1;
     // project["nodeId"] = 1;
     // project["highst"] = 1;
@@ -124,13 +150,13 @@ function find(collectionName, startTime,endTime,  response){
     // project["readySellPrice"] = 1;
     // project["currencyPerGoodsPreSale"] = 1;
 
-    dbase.collection(collectionName). find({_id:{$gt:startTime,$lt:endTime}}).sort({_id:1}).toArray(function(err, result) { // 返回集合中所有数据
+    dbase.collection(collectionName). find({[where]:{$gt:startTime,$lt:endTime}, managerId:4}).project(project).sort({[where]:1}).toArray(function(err, result) { // 返回集合中所有数据
         if (err) throw err;
 
          response.end(JSON.stringify(result));
     });
 }
-var server = app.listen(8083, function () {
+var server = app.listen(80, function () {
 
     var host = server.address().address;
     var port = server.address().port;

@@ -44,11 +44,12 @@
         }
 
         let askbidData = null;
+        let avgData = null;
         let robotBuyData = null;
         let robotSellData = null;
         let robotInfo = null;
         function checkDone(){
-            if(askbidData !== null && robotBuyData !== null &&robotSellData !== null && robotInfo!==null){
+            if(askbidData !== null&& avgData !== null && robotBuyData !== null &&robotSellData !== null && robotInfo!==null){
 
                 let chartData = askbidData;
 
@@ -80,6 +81,7 @@
                     data.addColumn('number', "sell");
                     data.addColumn({type: 'string', role: 'tooltip'});
                     data.addColumn('number', "sell");
+                    data.addColumn('number', "avg");
 
                     let mydata=[];
 
@@ -87,7 +89,7 @@
                     let askbidIndex = 0;
                     let buyIndex = 0;
                     let sellIndex = 0;
-
+                    let avgIndex = 0;
 
                     let tickStart = chartData[0]._id;
                     let tickEnd = chartData[chartData.length-1]._id;
@@ -109,6 +111,7 @@
                         mydata[i][5] = null;
                         mydata[i][6] = null;
                         mydata[i][7] = null;
+                        mydata[i][8] = null;
 //                        mydata[i][4] = null;
 
                         if(askbidIndex < chartData.length && chartData[askbidIndex]._id - timeTypeTicks[timeType] <= tick){
@@ -125,6 +128,10 @@
                             }
                         }
 
+                        if(avgIndex < avgData.length && avgData[avgIndex]._id < tick){
+                            mydata[i][8] = avgData[avgIndex].ask;
+                            avgIndex++;
+                        }
                         if(buyIndex < robotBuyData.length && robotBuyData[buyIndex].buyTick <= tick){
                             mydata[i][3] = robotBuyData[buyIndex].currencyPerGoodsIn;
                             mydata[i][4] = `ID:${robotBuyData[buyIndex].nodeId}
@@ -173,7 +180,7 @@
                     let series = {};
                     let vaxes = {};
 
-                    for(let i = 0; i < 8; i ++){
+                    for(let i = 0; i < 9; i ++){
                         series[i] = {targetAxisIndex: 0};
                         vaxes[i] = {title: "btc"};
                     }
@@ -184,7 +191,8 @@
                     series[4].lineWidth = 3;
                     series[5].lineWidth = 3;
                     series[6].lineWidth = 3;
-                    series[7].lineWidth = 1;
+                    series[7].lineWidth = 3;
+                    series[8].lineWidth = 3;
 
                     let classicOptions = {
                         title: title,
@@ -193,7 +201,7 @@
 
                         series:series,
                         vAxes: vaxes,
-                        colors: ['#000000','#e7b203', '#2ae747', '#d30003', '#000000']
+                        colors: ['#000000','#e7b203', '#2ae747', '#d30003', '#000000',  '#1222e7']
                     };
 
                     function drawClassicChart() {
@@ -205,13 +213,23 @@
                 }
             }
         }
-        let _get = `/d_a?startTime=${startTime}&endTime=${endTime}&symbol=BTCUSDT${timeType}`;
+        let _get = `/d_a?startTime=${startTime}&endTime=${endTime}&symbol=t_${timeType}`;
         console.log(_get);
         $.post(_get,function(cd,status){
 //            console.log(cd);
             askbidData =JSON.parse(cd);
             checkDone();
         });
+
+        let _get = `/d_d?startTime=${startTime}&endTime=${endTime}&symbol=avg_5m`;
+        console.log(_get);
+        $.post(_get,function(cd,status){
+//            console.log(cd);
+            avgData =JSON.parse(cd);
+            checkDone();
+        });
+
+
         _get = `/d_b?startTime=${startTime}&endTime=${endTime}&symbol=robot&where=buyTick`;
         console.log(_get);
         $.post(_get,function(cd,status){
@@ -234,6 +252,8 @@
             robotInfo =JSON.parse(cd);
             checkDone();
         });
+
+
     }
     function js_yyyy_mm_dd_hh_mm_ss (date) {
         let now = date;

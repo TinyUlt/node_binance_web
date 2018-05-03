@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 let DATABASE_EX = process.env.DATABASE_EX;
 // 创建 application/x-www-form-urlencoded 编码解析
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-
+var SYMBOL = process.argv[2];
 app.use(express.static('public'));
 
 app.get('/index.htm', function (req, res) {
@@ -46,12 +46,14 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 
 let MONGODB = process.env.MONGODB;
-let dbName = "BTCUSDT_"+DATABASE_EX;
-var dbase;
+let dbaseName = SYMBOL + "_" +DATABASE_EX;
+var dbchartName = SYMBOL + "_Chart";
+let dbchart;
 MongoClient.connect(MONGODB, function(err, db) {
     assert.equal(null, err);
     console.log('Connected correctly to server.');
-    dbase = db.db(dbName);
+    dbase = db.db(dbaseName);
+    dbchart = db.db(dbchartName);
     // dbase.createCollection('site', function (err, res) {
     //     assert.equal(null, err);
     //     console.log("创建集合!");
@@ -89,7 +91,7 @@ function handle(pathName, req, response) {
 
     console.log(pathName);
 
-    if(pathName == "a"){
+    if(pathName === "a"){
 
         let startTime =parseInt(req.query.startTime);
         let endTime =parseInt( req.query.endTime);
@@ -97,7 +99,7 @@ function handle(pathName, req, response) {
 
         getAsksBids(symbol, startTime, endTime, response);
     }
-    if(pathName == "b"){
+    if(pathName === "b"){
         var query = {};
         let timeType = req.query.timeType;
         let startTime =parseInt(req.query.startTime);
@@ -105,9 +107,18 @@ function handle(pathName, req, response) {
         let symbol = req.query.symbol;
         let where = req.query.where;
         getRobot(symbol,where, startTime, endTime, response);
-    }else if(pathName == "c"){
+    }
+    if(pathName === "c"){
 
         getRobotInfo(response);
+    }
+    if(pathName === "d"){
+
+        let startTime =parseInt(req.query.startTime);
+        let endTime =parseInt( req.query.endTime);
+        let symbol = req.query.symbol;
+
+        getAvg(symbol, startTime, endTime, response);
     }
 
 
@@ -123,7 +134,7 @@ function getRobotInfo(response){
 function getAsksBids(collectionName, startTime,endTime,  response){
 
     console.log(collectionName);
-    dbase.collection(collectionName). find({_id:{$gt:startTime,$lt:endTime}}).sort({_id:1}).toArray(function(err, result) { // 返回集合中所有数据
+    dbchart.collection(collectionName). find({_id:{$gt:startTime,$lt:endTime}}).sort({_id:1}).toArray(function(err, result) { // 返回集合中所有数据
         if (err) throw err;
 
         response.end(JSON.stringify(result));
@@ -154,6 +165,14 @@ function getRobot(collectionName, where, startTime,endTime,  response){
         if (err) throw err;
 
          response.end(JSON.stringify(result));
+    });
+}
+function getAvg(collectionName, startTime,endTime,  response){
+    console.log(collectionName);
+    dbchart.collection(collectionName). find({_id:{$gt:startTime,$lt:endTime}}).sort({_id:1}).toArray(function(err, result) { // 返回集合中所有数据
+        if (err) throw err;
+
+        response.end(JSON.stringify(result));
     });
 }
 var server = app.listen(8083, function () {

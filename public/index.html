@@ -221,7 +221,7 @@
             checkDone();
         });
 
-        let _get = `/d_d?startTime=${startTime}&endTime=${endTime}&symbol=avg_5m`;
+        _get = `/d_d?startTime=${startTime}&endTime=${endTime}&symbol=avg_5m`;
         console.log(_get);
         $.post(_get,function(cd,status){
 //            console.log(cd);

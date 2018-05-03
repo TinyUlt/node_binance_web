@@ -213,7 +213,7 @@
                 }
             }
         }
-        let _get = `/d_a?startTime=${startTime}&endTime=${endTime}&symbol=t_${timeType}`;
+        let _get = `/d_a?startTime=${startTime}&endTime=${endTime}&symbol=t${timeType}`;
         console.log(_get);
         $.post(_get,function(cd,status){
 //            console.log(cd);

@@ -69,7 +69,11 @@ function updatePrice(){
 
     ]).toArray(function(err, res) {
 
-        writePrice(res[0]);
+        console.log(res);
+        if(res.length>0){
+            writePrice(res[0]);
+        }
+
 
     });
     setTimeout(updatePrice, 1000);

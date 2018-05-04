@@ -1,3 +1,5 @@
+let fs = require('fs');
+let path = require('path');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -6,7 +8,7 @@ let DATABASE_EX = process.env.DATABASE_EX;
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var SYMBOL = process.argv[2];
 app.use(express.static('public'));
-
+// writePrice({a:"aaa",b:"bbb"});
 app.get('/index.htm', function (req, res) {
     res.sendFile( __dirname + "/" + "index.htm" );
 })
@@ -59,7 +61,32 @@ MongoClient.connect(MONGODB, function(err, db) {
     //     console.log("创建集合!");
     //     db.close();
     // });
+    setTimeout(updatePrice, 1000);
 });
+function updatePrice(){
+    dbase.collection("t_1s").aggregate([
+        {$group:{_id:null,tick:{'$last':'$_id'}, ask:{'$last':'$ask'},bid:{'$last':'$bid'}}},//1分钟线
+
+    ]).toArray(function(err, res) {
+
+        writePrice(res[0]);
+
+    });
+    setTimeout(updatePrice, 1000);
+}
+
+function writePrice(data){
+    let w_data = new Buffer( JSON.stringify(data));
+
+    fs.writeFile("public/price", w_data, function (err) {
+        if(err) {
+            console.error(err);
+        } else {
+            console.log('写入成功');
+        }
+    });
+
+}
 function getDateString(){
     let today=new Date();
     return today.getFullYear()+"_" + (today.getMonth() + 1) + "_" + today.getDate();

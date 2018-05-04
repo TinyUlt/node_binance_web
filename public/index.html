@@ -135,6 +135,7 @@
                         if(buyIndex < robotBuyData.length && robotBuyData[buyIndex].buyTick <= tick){
                             mydata[i][3] = robotBuyData[buyIndex].currencyPerGoodsIn;
                             mydata[i][4] = `ID:${robotBuyData[buyIndex].nodeId}
+                                            fallRateByMaxMin:${robotBuyData[buyIndex].fallRateByMaxMin}
                                             真实买入价:${robotBuyData[buyIndex].currencyPerGoodsInReal}
                                             买入价:${robotBuyData[buyIndex].currencyPerGoodsIn}
                                             成本价:${robotBuyData[buyIndex].currencyPerGoodsCost}
@@ -221,7 +222,7 @@
             checkDone();
         });
 
-        _get = `/d_d?startTime=${startTime}&endTime=${endTime}&symbol=avg_5m`;
+        _get = `/d_d?startTime=${startTime}&endTime=${endTime}&symbol=avg_1h`;
         console.log(_get);
         $.post(_get,function(cd,status){
 //            console.log(cd);

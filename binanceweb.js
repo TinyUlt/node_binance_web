@@ -69,7 +69,7 @@ function updatePrice(){
 
     ]).toArray(function(err, res) {
 
-        console.log(res);
+        //console.log(res);
         if(res.length>0){
             writePrice(res[0]);
         }
@@ -82,11 +82,11 @@ function updatePrice(){
 function writePrice(data){
     let w_data = new Buffer( JSON.stringify(data));
 
-    fs.writeFile("public/price", w_data, function (err) {
+    fs.writeFile("public/price.json", w_data, function (err) {
         if(err) {
             console.error(err);
         } else {
-            console.log('写入成功');
+            //console.log('写入成功');
         }
     });
 

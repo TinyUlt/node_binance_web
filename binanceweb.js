@@ -64,7 +64,7 @@ MongoClient.connect(MONGODB, function(err, db) {
     setTimeout(updatePrice, 1000);
 });
 function updatePrice(){
-    dbase.collection("t_1s").aggregate([
+    dbchart.collection("t_1s").aggregate([
         {$group:{_id:null,tick:{'$last':'$_id'}, ask:{'$last':'$ask'},bid:{'$last':'$bid'}}},//1分钟线
 
     ]).toArray(function(err, res) {
